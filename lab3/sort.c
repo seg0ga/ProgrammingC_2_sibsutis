@@ -1,3 +1,5 @@
+//qwerty
+
 void SelectSort(struct Student students[N]){
     for (int i=0;i<N;i++){
         int k = i;
