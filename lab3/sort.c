@@ -1,12 +1,28 @@
-//qwerty
-//qwerty2.0
-void SelectSort(struct Student students[N]){
-    for (int i=0;i<N;i++){
-        int k = i;
-        for (int j=i+1;j<N;j++){
-            if (students[k].sum < students[j].sum){
-                k=j;}}
-    struct Student stud=students[i];
-    students[i]=students[k];
-    students[k]=stud;}
+#include <stdio.h>
+
+void bubble_sort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;}}}}
+
+int main() {
+    int a[] = {4, 0};
+    int n = sizeof(a) / sizeof(a[0]);
+
+    printf("Исходный массив: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+    bubble_sort(a, n);
+
+    printf("Отсортированный массив: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
 }
