@@ -175,3 +175,49 @@ int main(){
 }
 ```
 ![{0BC58A4B-438B-4C88-BDAF-C81C37ADC970}](https://github.com/user-attachments/assets/d15b26ad-568a-47c3-b6ab-e8f7cd93485a)
+
+**Оценка 4. Перемножение матриц:**
+
+7.	Синхронизированный вывод
+
+Модифицируйте программу упр. 5 так, чтобы вывод родительского и дочернего потока был синхронизован: сначала родительский поток выводить первую строку, затем дочерний, затем родительский вторую строку и т.д. Использовать mutex. 
+
+```c
+#include <stdio.h>
+#include <pthread.h>
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+int turn = 0;
+
+void* child_thread(void* _) {
+    for (int i = 1; i < 6; i++) {
+        while (1) {
+            pthread_mutex_lock(&mutex);
+            if (turn == 1) break;
+            pthread_mutex_unlock(&mutex);}
+
+        printf("Дочер. поток: %d\n", i);
+        turn = 0;
+        pthread_mutex_unlock(&mutex);}
+    return NULL;
+}
+
+int main() {
+    pthread_t tid;
+    pthread_create(&tid, NULL, child_thread, NULL);
+
+    for (int i = 1; i < 6; i++) {
+        while (1) {
+            pthread_mutex_lock(&mutex);
+            if (turn == 0) break;
+            pthread_mutex_unlock(&mutex);}
+
+        printf("Главн. поток: %d\n", i);
+        turn = 1;
+        pthread_mutex_unlock(&mutex);}
+
+    pthread_join(tid, NULL);
+    pthread_mutex_destroy(&mutex);
+}
+```
+![image](https://github.com/user-attachments/assets/f763838f-8624-4d97-84f1-926caed4e444)
