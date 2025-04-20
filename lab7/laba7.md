@@ -221,3 +221,149 @@ int main() {
 }
 ```
 ![image](https://github.com/user-attachments/assets/f763838f-8624-4d97-84f1-926caed4e444)
+
+8.	Перемножение квадратных матриц NxN
+
+a.	Написать функцию произведения двух квадратных матриц A и B размером NxN (на выходе получим матрицу C). Исходные матрицы A и B заполнить единицами в основном потоке с функцией main. Для матриц размером меньше 5 в основном потоке вывести на экран матрицы A, B и C (для проверки правильности работы функции).
+b.	С командной строки считать размер матрицы и количество потоков. Распараллелить перемножение матриц разбив матрицу на равные части между потоками в главной функции по следующему принципу: N / threads, например если размер матрицы N = 8, а потоков 4, то каждый из потоков заберет вычисление N/4 = 2 строки и столбца.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+int THREADS,N,**A,**B,**C;
+
+void* umnozhenie(void* _) {
+    int thread_id=*(int*)_;
+    int stroki=N/THREADS;
+    int start=thread_id*stroki;
+    int end=start+stroki;
+    
+    for (int i=start;i<end;i++) {
+        for (int j=0;j<N;j++) {
+            C[i][j]= 0;
+            for (int k= 0; k<N;k++) {
+                C[i][j]+=A[i][k]*B[k][j];}}}
+}
+
+int main(int argc, char* argv[]){
+
+    N=atoi(argv[1]);
+    THREADS=atoi(argv[2]);
+
+
+    A=(int**)malloc(N*sizeof(int*));
+    B=(int**)malloc(N*sizeof(int*));
+    C=(int**)malloc(N*sizeof(int*));
+    for (int i = 0; i < N; i++) {
+        A[i] = (int*)malloc(N * sizeof(int));
+        B[i] = (int*)malloc(N * sizeof(int));
+        C[i] = (int*)malloc(N * sizeof(int));}
+
+    for (int i=0;i<N;i++) {
+        for (int j = 0; j < N; j++) {
+            A[i][j] = 1;
+            B[i][j] = 1;
+        }
+    }
+
+    pthread_t threads[THREADS];
+    int thread_ids[THREADS];
+    for (int i=0;i<THREADS;i++) {
+        thread_ids[i] =i;
+        pthread_create(&threads[i], NULL, umnozhenie, &thread_ids[i]);}
+
+    for (int i=0;i<THREADS;i++) {
+        pthread_join(threads[i], NULL);}
+
+    printf("Результат:\n");
+    for (int i=0;i<N;i++) {
+        for (int j=0;j<N;j++) {
+            printf("%d ",C[i][j]);
+        }
+    printf("\n");}
+
+    for (int i = 0; i < N; i++) {
+        free(A[i]);
+        free(B[i]);
+        free(C[i]);
+    }
+    free(A);free(B);free(C);
+}
+```
+
+![image](https://github.com/user-attachments/assets/bf9d9450-1200-40f9-ab5b-628720ab8a5d)
+
+9.	Время выполнения
+
+Замерить время выполнения с момента создания потоков (до цикла с pthread_create) и до завершения работы потоков (после цикла pthread_join). Позапускать с разным числом потоков и размером матрицы. Построить график в любой программе (excel, python, matlab и т.д.) или онлайн, который покажет зависимость времени выполнения от размера матрицы и количества потоков. Количество потоков от 1 до 128 с любым разумным шагом. Размер матрицы не более 2500, шаг размера матрицы на свое усмотрение.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <time.h>
+
+int THREADS,N,**A,**B,**C;
+
+void* umnozhenie(void* _) {
+    int thread_id=*(int*)_;
+    int stroki=N/THREADS;
+    int start=thread_id*stroki;
+    int end=start+stroki;
+    
+    for (int i=start;i<end;i++) {
+        for (int j=0;j<N;j++) {
+            C[i][j]= 0;
+            for (int k= 0; k<N;k++) {
+                C[i][j]+=A[i][k]*B[k][j];}}}
+}
+
+int main(int argc, char* argv[]){
+
+    N=atoi(argv[1]);
+    THREADS=atoi(argv[2]);
+
+
+    A=(int**)malloc(N*sizeof(int*));
+    B=(int**)malloc(N*sizeof(int*));
+    C=(int**)malloc(N*sizeof(int*));
+    for (int i = 0; i < N; i++) {
+        A[i] = (int*)malloc(N * sizeof(int));
+        B[i] = (int*)malloc(N * sizeof(int));
+        C[i] = (int*)malloc(N * sizeof(int));}
+
+    for (int i=0;i<N;i++) {
+        for (int j = 0; j < N; j++) {
+            A[i][j] = 1;
+            B[i][j] = 1;
+        }
+    }
+    clock_t start_time = clock();
+
+    pthread_t threads[THREADS];
+    int thread_ids[THREADS];
+
+    for (int i=0;i<THREADS;i++) {
+        thread_ids[i] =i;
+        pthread_create(&threads[i], NULL, umnozhenie, &thread_ids[i]);}
+
+    for (int i=0;i<THREADS;i++) {
+        pthread_join(threads[i], NULL);}
+
+    clock_t end_time=clock();
+    double execution_time=(double)(end_time-start_time)/CLOCKS_PER_SEC;
+
+
+    for (int i = 0; i < N; i++) {
+        free(A[i]);
+        free(B[i]);
+        free(C[i]);
+    }
+    free(A);free(B);free(C);
+    printf("%f",execution_time);
+}
+```
+![image](https://github.com/user-attachments/assets/00085226-a1bd-4177-a940-45df9e35c106)
+
