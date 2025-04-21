@@ -304,9 +304,10 @@ int main(int argc, char* argv[]){
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <unistd.h>
+
 
 int THREADS,N,**A,**B,**C;
-
 void* umnozhenie(void* _) {
     int thread_id=*(int*)_;
     int stroki=N/THREADS;
@@ -321,7 +322,6 @@ void* umnozhenie(void* _) {
 }
 
 int main(int argc, char* argv[]){
-
     N=atoi(argv[1]);
     THREADS=atoi(argv[2]);
 
@@ -340,10 +340,12 @@ int main(int argc, char* argv[]){
             B[i][j] = 1;
         }
     }
-    clock_t start_time = clock();
+    
 
     pthread_t threads[THREADS];
     int thread_ids[THREADS];
+    struct timeval start, end;
+    gettimeofday(&start,NULL);
 
     for (int i=0;i<THREADS;i++) {
         thread_ids[i] =i;
@@ -352,18 +354,38 @@ int main(int argc, char* argv[]){
     for (int i=0;i<THREADS;i++) {
         pthread_join(threads[i], NULL);}
 
-    clock_t end_time=clock();
-    double execution_time=(double)(end_time-start_time)/CLOCKS_PER_SEC;
-
-
+    gettimeofday(&end,NULL);
+    double time=(end.tv_sec-start.tv_sec)+(end.tv_usec-start.tv_usec)/1e6;
     for (int i = 0; i < N; i++) {
         free(A[i]);
         free(B[i]);
         free(C[i]);
     }
     free(A);free(B);free(C);
-    printf("%f",execution_time);
+    printf("%f",time);
 }
 ```
-![image](https://github.com/user-attachments/assets/00085226-a1bd-4177-a940-45df9e35c106)
+```py
+import matplotlib.pyplot as plt
+
+x=[0, 16, 256, 1000, 1700,2500]
+y1=[0, 0.000305, 0.082239, 5.490029, 34.863328,158.239867,]
+y2=[0,0.000400,0.042056,2.528819,15.982726,75.219546]
+y3=[0,0.000564,0.048222,1.230541,4.469586,19.826122]
+y4=[0,0.001988,0.043858,1.042493,3.284425,14.604082]
+y5=[0,0.013242,0.046186,0.994964,3.094185,14.312091]
+fig, ax = plt.subplots()
+
+ax.plot(x, y1, label='1')
+
+ax.plot(x, y2, label='2')
+ax.plot(x, y3, label='8')
+ax.plot(x, y4, label='32')
+ax.plot(x, y5, label='128')
+
+ax.legend()
+plt.show()
+```
+![{9DDF4BEC-168B-4BA4-81E6-205AC02B27CC}](https://github.com/user-attachments/assets/3a3a6429-165a-4007-b205-6adc7cb25456)
+
 
