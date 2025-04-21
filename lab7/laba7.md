@@ -386,6 +386,7 @@ ax.plot(x, y5, label='128')
 ax.legend()
 plt.show()
 ```
-![{9DDF4BEC-168B-4BA4-81E6-205AC02B27CC}](https://github.com/user-attachments/assets/3a3a6429-165a-4007-b205-6adc7cb25456)
+![{BD41456A-DA8D-444F-9EBE-34377878DCCD}](https://github.com/user-attachments/assets/fd847b00-6f21-4c1c-8a57-108afc2de211)
+
 
 
