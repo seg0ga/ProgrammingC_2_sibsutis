@@ -6,7 +6,7 @@ sort.c - Программа ShellSort Кутенкова Андрея САОД (
 
 sort.h - Файл с заголовками функций
 
-test_sorts.c - Файл текстирования CMocka
+test_sorts.c - Файл тестирования CMocka
 
 CMakeLists.txt - Файл для CMake и CTest
 
